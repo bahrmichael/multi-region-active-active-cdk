@@ -1,14 +1,14 @@
-# Welcome to your CDK TypeScript project
+# CDK Active-Active Multi-Region Proof of Concept
 
-This is a blank project for TypeScript development with CDK.
+[Read the companion article](https://bahr.dev/2022/04/08/multi-region-active-active-cdk).
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+## Deploy It
+
+Customize the `deploy.sh` file, and run it. See the article on how to test it.
 
 ## Useful commands
 
-* `npm run build`   compile typescript to js
-* `npm run watch`   watch for changes and compile
-* `npm run test`    perform the jest unit tests
-* `cdk deploy`      deploy this stack to your default AWS account/region
-* `cdk diff`        compare deployed stack with current state
-* `cdk synth`       emits the synthesized CloudFormation template
+* `yarn build`   compile typescript to js
+* `yarn cdk deploy`      deploy this stack to your default AWS account/region
+* `yarn cdk diff`        compare deployed stack with current state
+* `yarn cdk synth`       emits the synthesized CloudFormation template
