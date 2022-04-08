@@ -2,7 +2,14 @@ import {Fn, Stack, StackProps} from 'aws-cdk-lib';
 import {Construct} from 'constructs';
 import {AttributeType, BillingMode, Table} from "aws-cdk-lib/aws-dynamodb";
 import {DomainName, RestApi, SecurityPolicy} from "aws-cdk-lib/aws-apigateway";
-import {ARecord, CfnHealthCheck, CfnRecordSet, HostedZone, RecordTarget} from "aws-cdk-lib/aws-route53";
+import {
+    ARecord,
+    CfnHealthCheck,
+    CfnRecordSet,
+    CfnRecordSetGroup,
+    HostedZone,
+    RecordTarget
+} from "aws-cdk-lib/aws-route53";
 import {DnsValidatedCertificate} from "aws-cdk-lib/aws-certificatemanager";
 import {ApiGatewayDomain} from "aws-cdk-lib/aws-route53-targets";
 import {addHealthCheckEndpoint, createRestApi} from "./api";
@@ -93,20 +100,19 @@ export class MultiApp extends Stack {
                 port: 443,
                 requestInterval: 30,
                 resourcePath: `/${restApi.deploymentStage.stageName}/health`,
-                // TODO: Verify if we have to include regions or can omit it
-                // regions: [MAIN_REGION, ...SECONDARY_REGIONS],
             }
         });
-        // todo: i noticed that the health check is not enabled in the console. figure out why!
 
         const dnsRecord = new ARecord(this, `${region}`, {
             zone: hostedZone,
-            target: RecordTarget.fromAlias(new ApiGatewayDomain(apigwDomainName))
+            target: RecordTarget.fromAlias(new ApiGatewayDomain(apigwDomainName)),
         });
         const recordSet = dnsRecord.node.defaultChild as CfnRecordSet;
         recordSet.region = region;
         recordSet.healthCheckId = healthCheck.attrHealthCheckId;
         recordSet.setIdentifier = `${region}Api`;
+        // Warning: This does not yet evaluate the health of the target, and I don't feel like understand what that means exactly.
+        // CfnRecordSet has a aliasTarget where we can set evaluateTargetHealth to true, but the docs are sparse on what data dnsName requires.
     }
 }
 
